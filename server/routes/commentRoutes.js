@@ -1,9 +1,14 @@
 import express from "express";
 const router = express.Router();
 import { deleteComment, updateComment } from "./../controller/commentAuth.js";
-import { getComments, createComments } from "./../controller/posts.js";
+import {
+  getComments,
+  createComments,
+  recentComments,
+} from "./../controller/posts.js";
 
 router.route("/comments/:commentId").get(getComments);
+router.route("/recent").get(recentComments);
 router.route("/comments").post(createComments);
 
 router.route("/comments/:commentId").put(updateComment);

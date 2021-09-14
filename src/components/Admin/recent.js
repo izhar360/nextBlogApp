@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import { PostsContext } from "../../Context/blogContext";
@@ -10,15 +10,17 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Fade from "react-reveal/Fade";
 
-import { DeleteSinglePost } from "../../api";
+import { DeleteSinglePost, fetchSinglePost } from "../../api";
+import Post from "./post";
+import Pagination from "./pagination";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   Recent: {
     width: "88%",
     background: "#fff",
-    border: "1px solid #fff",
-    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.24)",
+    ...theme.borderWithShadow,
     padding: "15px",
+    borderRadius: "5px",
   },
   Article: {
     fontSize: "16px",
@@ -31,53 +33,20 @@ const useStyles = makeStyles({
     fontWeight: "500",
     marginBottom: "10px",
   },
-  dataBar: {
-    marginTop: "14px",
-    marginBottom: "5px",
-    color: "#878FA5",
-    fontWeight: "500",
-    fontSize: "13px",
-  },
-  Number: {
-    color: "#fff",
-    background: "#1082E8",
-    width: "20px",
-    textAlign: "center",
-    borderRadius: "20%",
-  },
-  img: {
-    width: "100%",
-    borderRadius: "15%",
-  },
-  title: {
-    marginLeft: "6px",
-  },
-  category: {
-    color: "#fff",
-    height: "100%",
-    width: "100%",
-    borderRadius: "12px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "12px",
-  },
-  backgroundCategory: {
-    background: "#F82485",
-  },
-  backgroundCategory2: {
-    background: "#229EBD",
-  },
 
   center: {
     display: "flex",
     alignItems: "center",
   },
-});
+}));
 
 const Recent = (props) => {
   const classes = useStyles();
-  const { Posts } = React.useContext(PostsContext);
+  const router = useRouter();
+
+  const [error, setError] = useState("");
+  const { Posts, setPostData } = React.useContext(PostsContext);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedPost, setselectedPost] = React.useState(null);
 
@@ -90,6 +59,19 @@ const Recent = (props) => {
     setAnchorEl(null);
   };
 
+  const editPostfunc = async (id) => {
+    try {
+      const { data } = await fetchSinglePost(id);
+      // const { creator, title, selectedFile, message, tags } = data;
+
+      localStorage.setItem("editPost", JSON.stringify(data));
+    } catch (e) {
+      console.log("error fetching single post...", e);
+    }
+    setAnchorEl(null);
+    router.push("/dashboard");
+  };
+
   const deletePostfunc = async (id) => {
     try {
       const { data } = await DeleteSinglePost(id);
@@ -100,13 +82,6 @@ const Recent = (props) => {
     setAnchorEl(null);
   };
 
-  const GetFormattedDate = (d) => {
-    const date = new Date(d);
-    const month = date.getMonth();
-    const day = date.getDate();
-    const year = date.getFullYear();
-    return day + "/" + month + "/" + year;
-  };
   return (
     <Grid container direction="column" className={classes.Recent}>
       <Grid item className={classes.Article}>
@@ -139,70 +114,26 @@ const Recent = (props) => {
             </IconButton>
           </Grid>
         </Grid>
-        {Posts.map((post, i) => (
-          <Fade bottom delay={`${i}00`}>
-            <Grid
-              key={i}
-              item
-              container
-              spacing={2}
-              className={classes.dataBar}
-            >
-              <Grid
-                item
-                xs
-                container
-                justifyContent="flex-start"
-                alignItems="center"
-              >
-                <div className={classes.Number}>{i + 1}</div>
-              </Grid>
-              <Grid
-                item
-                container
-                justifyContent="flex-start"
-                alignItems="flex-start"
-                xs={4}
-                style={{ marginTop: "8px" }}
-              >
-                <Grid item xs={3}>
-                  <img src={post.selectedFile} className={classes.img} />
-                </Grid>
-                <Grid item xs={8} className={classes.title}>
-                  {post.title}
-                </Grid>
-              </Grid>
-              <Grid item xs className={classes.center}>
-                {GetFormattedDate(post.createdAt)}
-              </Grid>
-              <Grid item xs={2}>
-                <div
-                  className={
-                    i % 2 == 0
-                      ? `${classes.category} ${classes.backgroundCategory}`
-                      : `${classes.category} ${classes.backgroundCategory2}`
-                  }
-                >
-                  {post.tags[0]}
-                </div>
-              </Grid>
-              <Grid item xs className={classes.center}>
-                {post.comments.length}
-              </Grid>
-              <Grid item xs className={classes.center}>
-                {post.likeCount}
-              </Grid>
-              <Grid item xs>
-                <IconButton
-                  aria-haspopup="true"
-                  onClick={(e) => handleClick(e, post._id)}
-                >
-                  <MoreVertIcon />
-                </IconButton>
-              </Grid>
-            </Grid>
+
+        {Posts.length > 0 ? (
+          <>
+            <Pagination
+              data={Posts}
+              RenderComponent={Post}
+              title="Posts"
+              pageLimit={5}
+              dataLimit={5}
+            />
+          </>
+        ) : (
+          <h1>No Posts to display</h1>
+        )}
+
+        {/* {Posts.map((post, i) => (
+          <Fade key={i} bottom delay={parseInt(`${i * 100}`)}>
+            <Post post={post} i={i} handleClick={handleClick} />
           </Fade>
-        ))}
+        ))} */}
       </Grid>
       <Menu
         id="simple-menu"
@@ -211,7 +142,7 @@ const Recent = (props) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Edit</MenuItem>
+        <MenuItem onClick={() => editPostfunc(selectedPost)}>Edit</MenuItem>
         <MenuItem onClick={() => deletePostfunc(selectedPost)}>Delete</MenuItem>
       </Menu>
     </Grid>

@@ -6,14 +6,13 @@ import { makeStyles } from "@material-ui/core/styles";
  * @author
  * @function Card
  **/
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   Card: {
-    border: "1px solid #fff",
     width: "auto",
     padding: "10px",
-    borderRadius: "5%",
+    borderRadius: "10px",
     background: "#fff",
-    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.24)",
+    ...theme.borderWithShadow,
   },
 
   numberTitle: {
@@ -26,7 +25,7 @@ const useStyles = makeStyles({
   title: {
     fontSize: "12px",
   },
-});
+}));
 
 const Card = ({ Icon, number, title }) => {
   const classes = useStyles();

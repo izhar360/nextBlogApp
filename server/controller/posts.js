@@ -82,6 +82,25 @@ export const getComments = async (req, res) => {
     return res.json({ success: false, error: e });
   }
 };
+export const recentComments = async (req, res) => {
+  try {
+    const comments = await PostMessage.aggregate([
+      { $project: { comments: 1 } },
+    ]);
+    let allArrays = comments.map((comment) => comment.comments);
+
+    let everything = [];
+    allArrays.map((item) => (everything = [...everything, ...item]));
+
+    if (comments)
+      return res.json({
+        success: true,
+        data: everything,
+      });
+  } catch (e) {
+    return res.json({ success: false, error: e });
+  }
+};
 
 export const createComments = async (req, res) => {
   // const id = "60fe558a58bb2b2b40ef5842";

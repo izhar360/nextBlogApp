@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
 import BlogDrawer from "../src/components/Admin/BlogDrawer";
 import Stats from "../src/components/Admin/stats";
+import Comments from "../src/components/Admin/comments";
 
 const useStyles = makeStyles({});
 
@@ -29,8 +30,8 @@ export default function Admin() {
           <Stats />
         </Grid>
 
-        <Grid item xs={3} style={{ background: "#CC573A" }}>
-          <h1>Extras</h1>
+        <Grid item xs={3}>
+          <Comments />
         </Grid>
       </Grid>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useHistory } from "react-router-dom";
+// import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { PostsContext } from "../src/Context/blogContext";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
@@ -12,11 +12,8 @@ const Editor = dynamic(() => import("../src/components/dashboard/custom.js"), {
 });
 
 const Form = () => {
-  const history = useHistory();
   const { postData, setPostData } = React.useContext(PostsContext);
   const classes = useStyles();
-
-  //editor submit
 
   return (
     <Paper className={classes.paper}>

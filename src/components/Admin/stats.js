@@ -68,10 +68,10 @@ const Stats = (props) => {
       alignItems="flex-start"
       className={classes.stats}
     >
-      <Grid item container spacing={4} direction="row">
+      <Grid item container spacing={5} direction="row">
         {Cards.map((card, i) => (
           <Grid item key={i}>
-            <Fade right delay={`${i * 200}`}>
+            <Fade right delay={parseInt(`${i * 200}`)}>
               {" "}
               <Card title={card.name} number="42034" Icon={card.icon} />
             </Fade>

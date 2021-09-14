@@ -22,6 +22,8 @@ export const createPost = (newPost) => axios.post(URL, newPost);
 export const fetchComments = (id) =>
   axios.get(`${COMMENTS_URL}/comments/${id}`);
 
+export const recentComments = () => axios.get(`${COMMENTS_URL}/recent`);
+
 export const submitCommentApi = (newcomment) =>
   axios.post(`${COMMENTS_URL}/comments`, newcomment);
 

@@ -9,6 +9,7 @@ import createEmotionCache from "../src/createEmotionCache";
 import { PostsContextProvider } from "../src/Context/blogContext";
 import { UserProvider } from "../src/Context/userContext";
 import "../src/components/comments/CommentBox.css";
+import "../src/components/Admin/pagination.css";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

@@ -3,6 +3,19 @@ import { fetchposts, fetchSinglePost } from "../api/index";
 
 const PostsContext = createContext();
 
+const getEditPostfromLocalStrorage = () => {
+  return localStorage.getItem("editPost")
+    ? JSON.parse(localStorage.getItem("editPost"))
+    : {
+        creator: null,
+        title: null,
+        message: null,
+        tags: null,
+        selectedFile: null,
+        blocks: null,
+      };
+};
+
 function PostsContextProvider({ children }) {
   const [name, setname] = useState("bros");
   const [loading, setLoading] = useState(false);
@@ -16,6 +29,11 @@ function PostsContextProvider({ children }) {
     tags: "",
     selectedFile: "",
   });
+
+  useEffect(() => {
+    setPostData(getEditPostfromLocalStrorage());
+    localStorage.removeItem("editPost");
+  }, []);
 
   useEffect(() => {
     const getpost = async () => {
