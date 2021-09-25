@@ -2,7 +2,7 @@
   background-color: #333;
   box-sizing: border-box;
   padding: 25px;
-  min-height: 100vh;
+  height: auto;
   width: 100vw;
   display: flex;
   flex-flow: column nowrap;

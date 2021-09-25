@@ -5,11 +5,10 @@ export const getposts = async (req, res) => {
     console.log("*gettting posts...");
     // old post with plain text, PostMessage
     const postMessage = await PostMessage.find();
-
     res.status(200).json(postMessage);
     console.log("*done gettting posts...!");
   } catch (err) {
-    res.status(404).json(err.message);
+    res.status(404).json("Something went wrong, could not get posts...");
   }
 };
 
@@ -102,10 +101,27 @@ export const recentComments = async (req, res) => {
   }
 };
 
+export const deleteComment = async (req, res) => {
+  const { id, CommentId } = req.params;
+  console.log("deltebodssssy", id, CommentId);
+  try {
+    if (!CommentId) {
+      return res.json({ success: false, error: "No comment id provided" });
+    }
+    const data = await PostMessage.updateOne(
+      { _id: id },
+      { $pull: { comments: { _id: CommentId }, autoIndexId: false } }
+    );
+    return res.json({ success: true, data });
+  } catch (err) {
+    return res.json({ success: false, error: err });
+  }
+};
+
 export const createComments = async (req, res) => {
   // const id = "60fe558a58bb2b2b40ef5842";
-  const { id, author, text } = req.body;
-
+  const { id, author, text, email } = req.body;
+  console.log("body", req.body);
   try {
     if (!author || !text) {
       // we should throw an error. we can do this check on the front end
@@ -117,7 +133,9 @@ export const createComments = async (req, res) => {
     const comment = {
       author,
       text,
+      email,
     };
+    console.log("sssx", comment, "the cooent");
     const data = await PostMessage.updateOne(
       { _id: id },
       { $push: { comments: comment, autoIndexId: false } }

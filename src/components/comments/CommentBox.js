@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import "whatwg-fetch";
 import CommentList from "./CommentList";
 import CommentForm from "./CommentForm";
+
 import {
   fetchComments,
   updateComment,
@@ -20,6 +21,7 @@ class CommentBox extends Component {
       text: "",
       comment: "",
       updateId: null,
+      email: "",
     };
     this.pollInterval = null;
   }
@@ -30,11 +32,16 @@ class CommentBox extends Component {
     if (!this.pollInterval) {
       this.pollInterval = setInterval(this.loadCommentsFromServer, 2000);
     }
+    if (localStorage.getItem("userData")) {
+      const { email, firstName } = JSON.parse(localStorage.getItem("userData"));
+      this.setState({ email, author: firstName });
+    }
   }
 
   componentWillUnmount() {
     if (this.pollInterval) clearInterval(this.pollInterval);
     this.pollInterval = null;
+    console.log("pipipi", this.state.email);
   }
 
   onChangeText = (e) => {
@@ -53,15 +60,17 @@ class CommentBox extends Component {
     });
   };
 
-  onDeleteComment = async (id) => {
-    const i = this.state.data.findIndex((c) => c._id === id);
+  onDeleteComment = async (CommentId) => {
+    const { id } = this.props;
+    const i = this.state.data.findIndex((c) => c._id === CommentId);
     const data = [
       ...this.state.data.slice(0, i),
       ...this.state.data.slice(i + 1),
     ];
     this.setState({ data });
+    const test = "just chcki";
     try {
-      await deleteComment(id);
+      await deleteComment({ id, CommentId });
       console.log("comment deleted");
     } catch (err) {
       console.log("could not deleted!");
@@ -71,45 +80,45 @@ class CommentBox extends Component {
   submitComment = (e) => {
     e.preventDefault();
 
-    const { author, text, updateId } = this.state;
-    if (!author || !text) return;
-    if (updateId) {
-      this.submitUpdatedComment();
-    } else {
-      this.submitNewComment();
-    }
+    //const { author, text, updateId } = this.state;
+    this.submitNewComment();
+    // if (!author || !text) return;
+
+    // if (updateId) {
+    //   this.submitUpdatedComment();
+    // } else {
+    //   this.submitNewComment();
+    // }
   };
 
   submitNewComment = async () => {
-    const { author, text } = this.state;
+    const { author, text, email } = this.state;
     const { id } = this.props;
     const data = [
       ...this.state.data,
-      { author, text, _id: Date.now().toString() },
+      { author, text, email, _id: Date.now().toString() },
     ];
     this.setState({ data });
     try {
-      const data = await submitCommentApi({ id, author, text });
+      const data = await submitCommentApi({ id, author, text, email });
       console.log("successfully updated!");
+      this.setState({ text: "" });
     } catch (err) {
       console.log(err);
     }
   };
 
-  submitUpdatedComment = async () => {
-    const { author, text, updateId } = this.state;
-    try {
-      const data = await updateComment({ updateId, author, text });
-      console.log("successfully updated!");
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  // submitUpdatedComment = async () => {
+  //   const { author, text, updateId } = this.state;
+  //   try {
+  //     const data = await updateComment({ updateId, author, text });
+  //     console.log("successfully updated!");
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   loadCommentsFromServer = () => {
-    // fetch returns a promise. If you are not familiar with promises, see
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-
     const getpost = async () => {
       const { id } = this.props;
       try {

@@ -43,9 +43,10 @@ const editor = new EditorJS({
 });
 
 const Custom = (props) => {
+  
   const { postData } = React.useContext(PostsContext);
   const router = useRouter();
-
+  
   const sumbitArticle = async () => {
     editor
       .save()

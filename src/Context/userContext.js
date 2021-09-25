@@ -17,6 +17,7 @@ function UserProvider({ children }) {
   //  const [user,setUser] = useState(getuserfromLocalStrorage())
   const [user, setUser] = useState({ username: null, token: null });
   const [successLog, setSuccessLog] = useState(false);
+  const [error, setError] = useState();
 
   useEffect(() => {
     setUser(getuserfromLocalStrorage());
@@ -42,6 +43,8 @@ function UserProvider({ children }) {
       }
     } catch (error) {
       console.log(error, "couldn't sign up, from signup api...");
+      setError(error);
+
       setSuccessLog(false);
     }
   };
@@ -63,6 +66,7 @@ function UserProvider({ children }) {
       setSuccessLog(true);
     } catch (error) {
       console.log(error);
+      setError(error);
       setSuccessLog(false);
     }
   };
@@ -73,7 +77,9 @@ function UserProvider({ children }) {
   };
 
   return (
-    <UserContext.Provider value={{ user, userSignUp, userLogin, userLogout }}>
+    <UserContext.Provider
+      value={{ user, error, userSignUp, userLogin, userLogout }}
+    >
       {children}
     </UserContext.Provider>
   );

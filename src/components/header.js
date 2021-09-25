@@ -14,10 +14,11 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 import Link from "../Link";
 import { UserContext } from "../Context/userContext.js";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 /**
  * @author
@@ -66,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
   const [openDrawer, setOpenDrawer] = useState(false);
- 
+
   const router = useRouter();
 
   const routes = [
@@ -83,6 +84,10 @@ const Header = (props) => {
     router.push("/signin");
   };
 
+  const userSignup = () => {
+    // history.push("/signin");
+    router.push("/signup");
+  };
   const userLogoutFunc = () => {
     userLogout();
     window.location.reload();
@@ -93,7 +98,11 @@ const Header = (props) => {
     <div>
       <AppBar position="static" className={classes.AppBar}>
         <Toolbar style={{ color: props.color }}>
-          <Typography className={classes.title}>BADA BING</Typography>
+          <Typography className={classes.title}>
+            <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
+              BADA BING
+            </Link>
+          </Typography>
           <IconButton
             edge="end"
             className={classes.menuButton}
@@ -119,7 +128,7 @@ const Header = (props) => {
                 </span>
               </ListItem>
               <ListItem className={classes.ListItem} disableTypography>
-                {user.token ? <ExitToAppIcon /> : <AccountCircleIcon />}
+                {user.token ? <LogoutIcon /> : <LoginIcon />}
                 <span style={{ marginLeft: "5px" }}>
                   {user.token ? (
                     <span
@@ -134,6 +143,19 @@ const Header = (props) => {
                       onClick={() => userLogin()}
                     >
                       Login
+                    </span>
+                  )}
+                </span>
+              </ListItem>
+              <ListItem className={classes.ListItem} disableTypography>
+                {!user.token && <AccountCircleIcon />}
+                <span style={{ marginLeft: "5px" }}>
+                  {!user.token && (
+                    <span
+                      style={{ cursor: "pointer" }}
+                      onClick={() => userSignup()}
+                    >
+                      Sign Up
                     </span>
                   )}
                 </span>

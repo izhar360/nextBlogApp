@@ -1,18 +1,20 @@
 import express from "express";
 const router = express.Router();
-import { deleteComment, updateComment } from "./../controller/commentAuth.js";
+import { updateComment } from "./../controller/commentAuth.js";
 import {
   getComments,
   createComments,
   recentComments,
+  deleteComment,
 } from "./../controller/posts.js";
 
 router.route("/comments/:commentId").get(getComments);
 router.route("/recent").get(recentComments);
 router.route("/comments").post(createComments);
+router.route("/comments/:id/:CommentId").delete(deleteComment);
 
 router.route("/comments/:commentId").put(updateComment);
-router.route("/comments/:commentId").delete(deleteComment);
+// router.route("/comments/").delete(deleteComment);
 
 //   router.get('/comments', (req, res) => {
 //     Comment.find((err, comments) => {

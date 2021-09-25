@@ -13,6 +13,7 @@ const postSchema = mongoose.Schema({
     {
       author: String,
       text: String,
+      email: String,
       createdAt: {
         type: Date,
         default: new Date(),

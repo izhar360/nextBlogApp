@@ -7,7 +7,7 @@ const USER_URL = "http://localhost:5000/user";
 export const SignUpUser = (user) => axios.post(`${USER_URL}/signup`, user);
 export const SignInUser = (user) => axios.post(`${USER_URL}/login`, user);
 
-export const fetchposts = () => axios.get(URL);
+export const fetchposts = () => axios.get(`${URL}/`);
 
 export const fetchSinglePost = (id) => axios.get(`${URL}/${id}`);
 
@@ -30,8 +30,8 @@ export const submitCommentApi = (newcomment) =>
 export const updateComment = ({ updateId, author, text }) =>
   axios.put(`${COMMENTS_URL}/comments/${updateId}`, { author, text });
 
-export const deleteComment = (updateId) =>
-  axios.delete(`${COMMENTS_URL}/comments/${updateId}`);
+export const deleteComment = ({ id, CommentId }) =>
+  axios.delete(`${COMMENTS_URL}/comments/${id}/${CommentId}`);
 
 //   fetch(`api/comments/${id}`, { method: "DELETE" })
 //   .then((res) => res.json())
